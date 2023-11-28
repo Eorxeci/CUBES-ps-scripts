@@ -37,8 +37,16 @@ foreach ($user in $data) {
         $accountPassword = $( -join ("ABCDabcd&@#$%1234".tochararray() | Get-Random -Count 8 | ForEach-Object { [char]$_ }))
         if ($flag -eq "personnel") {
             $dn = "OU=Professeurs" + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[0] + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[1]
-            Write-Output "-Name '$name' -GivenName '$givenName' -Surname '$surname' -SamAccountName '$samAccountName' -UserPrincipalName '$userPrincipalName' -AccountPassword (ConvertTo-SecureString -AsPlainText '$accountPassword' -Force) -Enable $true -ChangePasswordAtLogon $true -Path '$dn'"
+            Write-Output "-Name '$name'"
             New-ADUser -Name "$name" -GivenName "$givenName" -Surname "$surname" -SamAccountName "$samAccountName" -UserPrincipalName "$userPrincipalName" -AccountPassword (ConvertTo-SecureString -AsPlainText "$accountPassword" -Force) -Enabled $true -ChangePasswordAtLogon $true -Path "$dn"
+        }
+        elseif ($flag -eq "eleve") {
+            $dn = "OU=Eleves" + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[0] + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[1]
+            Write-Output "-Name '$name'"
+            New-ADUser -Name "$name" -GivenName "$givenName" -Surname "$surname" -SamAccountName "$samAccountName" -UserPrincipalName "$userPrincipalName" -AccountPassword (ConvertTo-SecureString -AsPlainText "$accountPassword" -Force) -Enabled $true -ChangePasswordAtLogon $true -Path "$dn"
+        }
+        else {
+            Write-Output "Wrong flag"
         }
         #Write-Output $user.split(" ")[1]
         #New-ADUser -Name $USER -GivenName "Jean" -Surname "DUPONT" -SamAccountName "jdupont" -UserPrincipalName "jdupont@lab.intra" -AccountPassword (ConvertTo-SecureString -AsPlainText "Pàssw0rd" -Force) -Enable $true -ChangePasswordAtLogon $true -Path "OU=Users,OU=IT,OU=Services,DC=LAB,DC=INTRA"
