@@ -1,6 +1,6 @@
-#####script silencieux#####
+######################### SCRIPT #########################
+#-- creation des repertoires et application des droits --#
 
-##creation des repertoires et application des droits##
 New-Item -name "PARTAGE" -Path "C:\" -ItemType Directory
 New-Item -name "ESPACEPROFESSEURS" -Path "C:\PARTAGE\" -ItemType Directory
 New-Item -name "ESPACEADMINISTRATIF" -Path "C:\PARTAGE\" -ItemType Directory
@@ -58,3 +58,5 @@ $ACL = Get-ACL -Path "C:\PARTAGE\"
 $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("Administrateurs", "FullControl", "Allow")
 $ACL.SetAccessRule($AccessRule)
 $ACL | Set-Acl -Path "C:\PARTAGE\"
+
+########################## FIN ###########################

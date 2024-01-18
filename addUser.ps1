@@ -1,4 +1,4 @@
-##### INITIALISATION #####
+############### INITIALISATION ###############
 
 $path = "userList.txt"
 $data = cat $path
@@ -14,7 +14,8 @@ $userPrincipalName = "none"
 $accountPassword = "none"
 $dn = "none"
 
-######### SCRIPT #########
+################### SCRIPT ####################
+#-- Définition des variables personnalisées --#
 
 foreach ($user in $data) {
     if ($user -like "## PERSONNEL*") {
@@ -53,6 +54,9 @@ foreach ($user in $data) {
         #$domain= "@{Domain=eorxeci.lan}"
         $userPrincipalName = $samAccountName + $domain.split("{")[0] + $domain.split("=")[1].split("}")[0]
         $accountPassword = $( -join ("ABCDabcd&@#$%1234".tochararray() | Get-Random -Count 8 | ForEach-Object { [char]$_ }))
+
+#--------- Creation de l'utilisateur ---------#
+
         if ($flag -eq "personnel") {
             $group = "Profs"
             $dn = "OU=Professeurs" + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[0] + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[1]
@@ -106,7 +110,12 @@ foreach ($user in $data) {
         }
 
         Add-ADGroupMember -Identity "$group" -Members $samAccountName
+
+#-------- Creation du dossier partagé --------#
+
         New-Item -name $samAccountName -Path "C:\PARTAGE\" -ItemType Directory
+
+#----- Initialisation des variables acl ------#
 
         $userGlobalInfo = Get-ADUser -Identity $samAccountName
         Write-Output $userGlobalInfo
@@ -116,9 +125,13 @@ foreach ($user in $data) {
         Write-Output $homeDirectoryShortPath
         Set-ADUser $userGlobalInfo -HomeDrive "U:" -HomeDirectory $homeDirectoryPath
 
+#---- Mise en place des accès au partage -----#
+
         $acl = Get-Acl -Path $homeDirectoryShortPath
         $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($samAccountName,"FullControl","Allow")
         $acl.SetAccessRule($AccessRule)
         $acl | Set-acl -Path $homeDirectoryShortPath
     }
 }
+
+##################### FIN #####################

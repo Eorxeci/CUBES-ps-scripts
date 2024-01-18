@@ -1,8 +1,10 @@
-#Creation automatique des OU necessaires
+############### INITIALISATION ###############
 
 $domain = [string] $(Get-ADDomainController | Select-Object Domain)
 $DC = "DC=" + $domain.split("=")[1].split("}")[0].split(".")[0] + ",DC=" + $domain.split("=")[1].split("}")[0].split(".")[1]
 
+################### SCRIPT ####################
+#-------------- Creation des OU --------------#
 
 Write-Output "Creation de l'OU Professeurs"
 New-ADOrganizationalUnit -Name "Professeurs" -Path $DC
@@ -30,7 +32,7 @@ New-ADOrganizationalUnit -Name "ElevesLM" -Path $DC
 
 Write-Output "Toutes les OU ont ete creees"
 
-#Creation des groupes utilisateurs
+#----- Creation des groupes utilisateurs -----#
 
 New-ADGroup -Name "Profs" -SamAccountName profs -GroupCategory Security -GroupScope Global -DisplayName "Profs" -Path $DC
 New-ADGroup -Name "Administratifs" -SamAccountName administratifs -GroupCategory Security -GroupScope Global -DisplayName "Administratifs" -Path $DC
@@ -38,3 +40,4 @@ New-ADGroup -Name "Eleves" -SamAccountName eleves -GroupCategory Security -Group
 
 Write-Output "Tous les groupes ont ete crees"
 
+##################### FIN #####################
